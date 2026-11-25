@@ -1,0 +1,74 @@
+EVIDENCIA · Variante Q1 / fila 1 · Laura Navarrete y Joiner Pineda
+Cada bloque trae el comando y, debajo, su salida literal sin editar.
+
+================================================================
+1. Regla de arquitectura pasando (etiqueta final)
+$ bash codigo/verificar-regla.sh ; echo "exit=$?"
+================================================================
+REGLA OK: los modulos solo conocen event y bus
+exit=0
+
+================================================================
+2. Violacion inducida en el arbol de trabajo (sin commit) y verificacion
+Cambio introducido (git diff):
+================================================================
+diff --git a/codigo/src/main/java/com/ejemplo/tienda/orders/OrderService.java b/codigo/src/main/java/com/ejemplo/tienda/orders/OrderService.java
+index 9aaf436..f76343e 100644
+--- a/codigo/src/main/java/com/ejemplo/tienda/orders/OrderService.java
++++ b/codigo/src/main/java/com/ejemplo/tienda/orders/OrderService.java
+@@ -1,6 +1,7 @@
+ package com.ejemplo.tienda.orders;
+ 
+ import com.ejemplo.tienda.bus.EventBus;
++import com.ejemplo.tienda.inventory.InventoryService;
+ import com.ejemplo.tienda.event.OrderPlaced;
+ import com.ejemplo.tienda.event.StockRejected;
+ import com.ejemplo.tienda.event.StockReserved;
+----------------------------------------------------------------
+$ bash codigo/verificar-regla.sh ; echo "exit=$?"
+orders/OrderService.java:4:import com.ejemplo.tienda.inventory.InventoryService;
+REGLA VIOLADA
+exit=1
+----------------------------------------------------------------
+$ git checkout -- codigo/src/main/java/com/ejemplo/tienda/orders/OrderService.java
+$ bash codigo/verificar-regla.sh ; echo "exit=$?"
+REGLA OK: los modulos solo conocen event y bus
+exit=0
+
+================================================================
+3. Muestra de la Hoja 1, sobre la etiqueta hoja-1 (comando en LEEME.md)
+================================================================
+PEDIDO 1 CONFIRMADO total=180000
+PEDIDO 2 CONFIRMADO total=202500
+PEDIDO 3 RECHAZADO total=0
+PEDIDO 4 CONFIRMADO total=1255500
+
+3b. La misma muestra sobre la etiqueta final: cambia solo la linea 4,
+    como lo indica la seccion Q1 de la Hoja 2 (31 unidades >= 3u = 15).
+PEDIDO 1 CONFIRMADO total=180000
+PEDIDO 2 CONFIRMADO total=202500
+PEDIDO 3 RECHAZADO total=0
+PEDIDO 4 CONFIRMADO total=1185750
+
+================================================================
+4. Muestra de la Hoja 2 (Q1), sobre la etiqueta final, en corrida aparte
+================================================================
+PEDIDO 1 CONFIRMADO total=573750
+PEDIDO 2 CONFIRMADO total=567000
+PEDIDO 3 CONFIRMADO total=45000
+
+================================================================
+5. $ git diff --name-status hoja-1 final
+================================================================
+M	codigo/src/main/java/com/ejemplo/tienda/inventory/DescuentoPorVolumen.java
+A	codigo/src/test/java/com/ejemplo/tienda/MuestraHoja2.java
+A	codigo/src/test/java/com/ejemplo/tienda/inventory/DescuentoPorVolumenTramoTest.java
+
+================================================================
+6. $ git log --format="%h %ad %an%d %s" --date=iso
+================================================================
+776f81e 2026-11-24 19:19:04 -0500 Laura Navarrete (HEAD -> main) ADR-0002 (cambio de la Hoja 2), informe y comando de la MuestraHoja2 en LEEME
+dc3b77d 2026-11-24 19:17:59 -0500 Joiner Pineda (tag: final) Hoja 2 (Q1): tramo nuevo de descuento d+5 desde 3u, prueba del tramo y MuestraHoja2
+000747f 2026-11-24 19:17:34 -0500 Laura Navarrete (tag: hoja-1) Hoja 1: pruebas de RN-1 a RN-5, MuestraHoja1 y LEEME
+3c24e31 2026-11-24 19:17:33 -0500 Joiner Pineda Hoja 1: tienda de eventos adaptada a la fila 1 (ids numericos, clienteId, estados, RN-5 sincrona, descuento en DescuentoPorVolumen) y regla de arquitectura
+fb3c243 2026-11-24 19:13:44 -0500 Laura Navarrete ADR-0001: elegimos eventos para la variante Q1 / fila 1, con prediccion del costo de la Hoja 2
