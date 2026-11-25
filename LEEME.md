@@ -24,6 +24,25 @@ PEDIDO 3 RECHAZADO total=0
 PEDIDO 4 CONFIRMADO total=1255500
 ```
 
+En la etiqueta `final`, la línea 4 sale `PEDIDO 4 CONFIRMADO total=1185750`: la Hoja 2 (Q1) dice que esa línea cambia, porque 31 unidades ≥ 3u = 15 reciben el tramo nuevo. Las líneas 1 a 3 no cambian.
+
+## Muestra de la Hoja 2 (Q1, tramo nuevo de descuento)
+
+En una corrida aparte, desde la raíz del proyecto:
+
+```bash
+cd codigo
+mvn -q test-compile exec:java "-Dexec.classpathScope=test" "-Dexec.mainClass=com.ejemplo.tienda.MuestraHoja2"
+```
+
+Salida esperada (fila 1):
+
+```text
+PEDIDO 1 CONFIRMADO total=573750
+PEDIDO 2 CONFIRMADO total=567000
+PEDIDO 3 CONFIRMADO total=45000
+```
+
 ## Regla de arquitectura
 
 Ningún módulo (`orders`, `inventory`, `billing`, `notifications`) importa a otro; `event` y `bus` no importan módulos; solo `bus` importa RabbitMQ y JSON. Se verifica de dos formas, cualquiera basta:
