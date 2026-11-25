@@ -1,0 +1,15 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: tienda-rabbit
+    environment:
+      RABBITMQ_DEFAULT_USER: tienda
+      RABBITMQ_DEFAULT_PASS: tienda
+    ports:
+      - "5672:5672"     # AMQP: where the application connects
+      - "15672:15672"   # Management UI: http://localhost:15672
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 12
